@@ -1,28 +1,14 @@
----
-title: "repdata"
-output: html_document
----
-
-
-
-## General setup
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-
 ## 0. Get and clean data
-```{r}
+#Import data
 df <- read.csv("activity.csv")
 df$date <- as.Date(df$date) 
 str(df)
-```
+
+
 
 
 
 ## 1. What is mean total number of steps taken per day?
-```{r}
 # Create new data frame
 df1 <- df
 df1 <- aggregate(steps ~ date, data=df1, FUN=sum, na.rm = TRUE)
@@ -31,12 +17,12 @@ str(df1)
 # Create histogram
 hist(df1$sum.steps)
 summary(df1$sum.steps)
-```
+
+
 
 
 
 ## 2. What is the average daily activity pattern?
-```{r}
 # Create new data frame
 df2 <- df
 str(df2)
@@ -46,12 +32,12 @@ df2$mean.steps <- as.numeric(df2$steps)
 # Create plot
 plot(df2$interval, df2$mean.steps, type = "l")
 #Answer: 835
-```
+
+
 
 
 
 ## 3. Imputing missing values
-```{r}
 # Number of missing values
 df3 <- df
 colSums(is.na(df3))
@@ -71,12 +57,12 @@ str(df3x)
 hist(df3x$sum.steps)
 summary(df3x$sum.steps)
 #Answer: Values do not differ considerably from the estimates from the first part of the assignment
-```
+
+
 
 
 
 ## 4. Are there differences in activity patterns between weekdays and weekends?
-```{r}
 # Create new data frame and variable
 df4 <- df3
 df4$dayOFweek1 <- weekdays(df4$date)
@@ -92,5 +78,5 @@ library(ggplot2)
 ggplot(data = df4x, aes(interval, steps)) +
   geom_line() +
   facet_grid( ~ dayOFweek2) 
-```
+
 

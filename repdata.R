@@ -1,28 +1,14 @@
----
-title: "repdata"
-output: html_document
----
-
-
-
-## General setup
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-
 ## 0. Get and clean data
-```{r}
+#Import data
 df <- read.csv("activity.csv")
 df$date <- as.Date(df$date) 
 str(df)
-```
+
+
 
 
 
 ## 1. What is mean total number of steps taken per day?
-```{r}
 # Create new data frame
 df1 <- df
 df1 <- aggregate(steps ~ date, data=df1, FUN=sum, na.rm = TRUE)
@@ -31,29 +17,32 @@ str(df1)
 # Create histogram
 hist(df1$sum.steps)
 summary(df1$sum.steps)
-```
+
+
 
 
 
 ## 2. What is the average daily activity pattern?
-```{r}
 # Create new data frame
 df2 <- df
+df2 <- aggregate(cbind(steps, interval) ~ date, data=df2, FUN=mean, na.rm = TRUE)
+df1$sum.interval <- as.character(df1$interval)
+
 str(df2)
-df2 <- aggregate(steps ~ interval, data=df2, FUN=mean, na.rm = TRUE)
 df2$mean.steps <- as.numeric(df2$steps)
 
 # Create plot
-plot(df2$interval, df2$mean.steps, type = "l")
-#Answer: 835
-```
+plot(df2$date, df2$mean.steps, type = "l")
+#Answer: 2012-11-23
+
+
 
 
 
 ## 3. Imputing missing values
-```{r}
 # Number of missing values
 df3 <- df
+df3$date <- as.Date(df3$date) 
 colSums(is.na(df3))
 
 # Replace NA with means
@@ -61,22 +50,22 @@ df3[is.na(df3)] <- mean(df3$steps, na.rm = TRUE)
 colSums(is.na(df3))
 
 # Create new data frame
-df3x <- aggregate(cbind(steps, interval) ~ date, data=df3, FUN=sum, na.rm = TRUE)
-str(df3x)
-df3x$sum.steps <- as.numeric(df3x$steps)
-df3x$sum.interval <- as.numeric(df3x$interval)
-str(df3x)
+df3 <- aggregate(cbind(steps, interval) ~ date, data=df3, FUN=sum, na.rm = TRUE)
+str(df3)
+df3$sum.steps <- as.numeric(df3$steps)
+df3$sum.interval <- as.numeric(df3$interval)
+str(df3)
 
 # Create histogram
-hist(df3x$sum.steps)
-summary(df3x$sum.steps)
+hist(df3$sum.steps)
+summary(df3$sum.steps)
 #Answer: Values do not differ considerably from the estimates from the first part of the assignment
-```
+
+
 
 
 
 ## 4. Are there differences in activity patterns between weekdays and weekends?
-```{r}
 # Create new data frame and variable
 df4 <- df3
 df4$dayOFweek1 <- weekdays(df4$date)
@@ -86,11 +75,9 @@ df4$dayOFweek2 <- as.factor(df4$dayOFweek2)
 str(df4)
 
 # Create graph
-df4x <- aggregate(steps ~ interval + dayOFweek2, data=df4, FUN=mean, na.rm = TRUE)
-
 library(ggplot2)
-ggplot(data = df4x, aes(interval, steps)) +
-  geom_line() +
+ggplot(data = df4, aes(date, steps)) +
+  geom_point() +
   facet_grid( ~ dayOFweek2) 
-```
+
 
